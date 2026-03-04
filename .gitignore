@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# Build and output
+dist/
+build/
+out/
+.next/
+*.egg-info/
+.eggs/
+
+# Logs and temp
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+.cache/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing and coverage
+coverage/
+.nyc_output/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Database and migrations (optional: uncomment if you don't want to track local DB files)
+# *.sqlite
+# *.db
+
+# OS
+.DS_Store
+Thumbs.db
