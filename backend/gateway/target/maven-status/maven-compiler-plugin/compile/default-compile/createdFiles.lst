@@ -1,0 +1,5 @@
+gateway\GatewayApplication.class
+gateway\filter\JwtGatewayFilter.class
+gateway\filter\JwtGatewayFilter$Config.class
+gateway\config\JwtUtils.class
+gateway\config\GatewayConfig.class

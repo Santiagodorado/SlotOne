@@ -1,0 +1,60 @@
+### ===============================================
+### PRUEBAS API GATEWAY - MICROSERVICIOS
+### ===============================================
+
+### 1. AUTENTICACIÓN (Sin JWT) - Ruta pública
+POST http://localhost:8080/api/usuarios/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "password": "123456"
+}
+
+### Guardar el token JWT de la respuesta anterior para usar en las siguientes pruebas
+### Reemplazar {JWT_TOKEN} con el token obtenido
+
+###
+
+### 2. LISTAR USUARIOS (Con JWT) - Microservicio usuarios
+GET http://localhost:8080/api/usuarios/findAll
+Authorization: Bearer {JWT_TOKEN}
+
+###
+
+### 3. ROLES (Con JWT) - Microservicio usuarios
+GET http://localhost:8080/api/roles
+Authorization: Bearer {JWT_TOKEN}
+
+###
+
+### ===============================================
+### PRUEBAS DE SEGURIDAD
+### ===============================================
+
+### 10. INTENTO SIN JWT (Debe fallar con 401)
+GET http://localhost:8080/api/usuarios/findAll
+
+###
+
+### 11. JWT INVÁLIDO (Debe fallar con 401)
+GET http://localhost:8080/api/usuarios/findAll
+Authorization: Bearer token_invalido_12345
+
+###
+
+### ===============================================
+### RUTAS COMPLETAS DISPONIBLES:
+### ===============================================
+### USUARIOS (puerto 5000):
+### - /api/usuarios/**
+### - /api/roles/**
+###
+### ===============================================
+### INSTRUCCIONES:
+### ===============================================
+### 1. Asegúrate de que todos los microservicios estén ejecutándose
+### 2. Ejecuta primero la petición de login (#1)
+### 3. Copia el token JWT de la respuesta
+### 4. Reemplaza {JWT_TOKEN} en las demás peticiones
+### 5. Ejecuta las pruebas para verificar que el gateway funcione 
