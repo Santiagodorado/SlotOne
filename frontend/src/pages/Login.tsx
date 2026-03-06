@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import './Login.css'
 
 export default function Login() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -21,10 +22,16 @@ export default function Login() {
 
     setLoading(true)
     try {
-      const { token, user } = await login({ email: email.trim(), password })
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
-      window.location.href = '/'
+      const res = await login({ email: email.trim(), password })
+      localStorage.setItem('token', res.token)
+      localStorage.setItem('user', JSON.stringify({
+        id: res.id,
+        nombres: res.nombres,
+        apellidos: res.apellidos,
+        correo: res.correo,
+        rol: res.rol,
+      }))
+      navigate('/', { replace: true })
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Credenciales incorrectas. Verifica tu correo y contraseña.'
