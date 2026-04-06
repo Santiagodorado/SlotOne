@@ -31,7 +31,14 @@ export default function Login() {
         correo: res.correo,
         rol: res.rol,
       }))
-      navigate('/', { replace: true })
+      const rol = res.rol
+      if (rol === 'BUSINESS' || rol === 'ROLE_BUSINESS') {
+        navigate('/panel', { replace: true })
+      } else if (rol === 'PLATFORM_ADMIN' || rol === 'ROLE_PLATFORM_ADMIN') {
+        navigate('/admin', { replace: true })
+      } else {
+        navigate('/', { replace: true })
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Credenciales incorrectas. Verifica tu correo y contraseña.'
