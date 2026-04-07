@@ -5,14 +5,14 @@ INSERT INTO rol (nombre) VALUES
 
 INSERT INTO usuario (nombres, apellidos, correo, clave, tipoIdentificacion, numIdentificacion, idRol) VALUES 
 -- BUSINESS (5)
-('Pedro', 'Gomez', 'pedro.gomez@unicauca.edu.co', 'password123', 'CE', '10000001', 2),
+('User', 'Negocio', 'negocio@unicauca.edu.co', 'password123', 'CE', '10000001', 2),
 ('Ana', 'Diaz', 'ana.diaz@unicauca.edu.co', 'password456', 'CE', '10000002', 2),
 ('Carlos', 'Ramirez', 'carlos.ramirez@unicauca.edu.co', 'password789', 'CC', '10000003', 2),
 ('Maria', 'Lopez', 'maria.lopez@unicauca.edu.co', 'password101', 'CC', '10000004', 2),
 ('Roberto', 'Martinez', 'roberto.martinez@unicauca.edu.co', 'password202', 'CE', '10000005', 2),
 
 -- CLIENT (10)
-('Laura', 'Rodriguez', 'laura.rodriguez@unicauca.edu.co', 'password111', 'CC', '10000006', 1),
+('User', 'Cliente', 'cliente@unicauca.edu.co', 'password123', 'CC', '10000006', 1),
 ('Juan', 'Martinez', 'juan.martinez@unicauca.edu.co', 'password222', 'CC', '10000007', 1),
 ('Sofia', 'Garcia', 'sofia.garcia@unicauca.edu.co', 'password333', 'CE', '10000008', 1),
 ('Daniel', 'Perez', 'daniel.perez@unicauca.edu.co', 'password444', 'CC', '10000009', 1),
@@ -25,4 +25,4 @@ INSERT INTO usuario (nombres, apellidos, correo, clave, tipoIdentificacion, numI
 
 -- PLATFORM_ADMIN (2)
 ('Juan', 'Lopez', 'juan.lopez@unicauca.edu.co', 'password202', 'CE', '10000016', 3),
-('Duber', 'Andres', 'dubereraso@unicauca.edu.co', 'password1063', 'CE', '10000017', 3);
+('User', 'Admin', 'admin@unicauca.edu.co', 'password123', 'CE', '10000017', 3);

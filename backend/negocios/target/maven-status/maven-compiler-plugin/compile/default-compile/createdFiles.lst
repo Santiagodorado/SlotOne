@@ -1,0 +1,9 @@
+negocios\dto\NegocioResponseDTO.class
+negocios\controller\NegocioController.class
+negocios\service\NegocioServiceImpl.class
+negocios\NegociosApplication.class
+negocios\config\ModelMapperConfig.class
+negocios\repository\NegocioRepository.class
+negocios\dto\NegocioRequestDTO.class
+negocios\service\NegocioService.class
+negocios\model\NegocioEntity.class

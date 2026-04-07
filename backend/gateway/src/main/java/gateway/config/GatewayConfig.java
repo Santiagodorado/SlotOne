@@ -25,6 +25,15 @@ public class GatewayConfig {
                 .filters(f -> f.filter(jwtGatewayFilter.apply(new JwtGatewayFilter.Config())))
                 .uri("http://localhost:5000"))
             
+            // Negocios y agenda: solo proxy (sin JwtGatewayFilter) para que GET/POST funcionen sin Bearer
+            .route("negocios-service", r -> r
+                .path("/api/negocios/**")
+                .uri("http://localhost:5004"))
+            
+            .route("agenda-service", r -> r
+                .path("/api/agenda/**")
+                .uri("http://localhost:5005"))
+            
             // ============== RUTAS PROTEGIDAS (CON JWT) ==============
             
             // Rutas de roles
