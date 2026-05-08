@@ -6,6 +6,8 @@ export interface Negocio {
   descripcion?: string | null;
   direccion: string;
   telefono: string;
+  /** Correo para alertas internas (ej. nuevas reservas). */
+  correo?: string | null;
   logoUrl?: string | null;
   duenioId: number;
 }
@@ -15,6 +17,7 @@ export interface CrearNegocioRequest {
   descripcion?: string;
   direccion: string;
   telefono: string;
+  correo?: string;
   logoUrl?: string | null;
   duenioId: number;
 }

@@ -15,6 +15,7 @@ export default function CreateBusiness() {
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
+  const [emailNegocio, setEmailNegocio] = useState('')
   const [description, setDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -94,6 +95,7 @@ export default function CreateBusiness() {
         descripcion: description.trim() || undefined,
         direccion: address.trim(),
         telefono: phone.trim(),
+        correo: emailNegocio.trim() || undefined,
         logoUrl,
         duenioId,
       })
@@ -177,6 +179,22 @@ export default function CreateBusiness() {
                 placeholder="+34 600 000 000"
                 disabled={loading}
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="emailNegocio">
+                Correo de contacto del negocio <span className="form-optional">(recomendado)</span>
+              </label>
+              <input
+                id="emailNegocio"
+                type="email"
+                autoComplete="email"
+                value={emailNegocio}
+                onChange={(e) => setEmailNegocio(e.target.value)}
+                placeholder="reservas@mipeluqueria.com"
+                disabled={loading}
+              />
+              <p className="cb-hint-email">Lo usamos para enviarte alertas cuando un cliente reserve.</p>
             </div>
 
             <div className="form-group">

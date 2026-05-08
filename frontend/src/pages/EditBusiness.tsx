@@ -12,6 +12,7 @@ export default function EditBusiness() {
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
+  const [emailNegocio, setEmailNegocio] = useState('')
   const [description, setDescription] = useState('')
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
@@ -42,6 +43,7 @@ export default function EditBusiness() {
           setName(n.nombre)
           setAddress(n.direccion)
           setPhone(n.telefono)
+          setEmailNegocio(n.correo ?? '')
           setDescription(n.descripcion ?? '')
           setLogoPreview(n.logoUrl ?? null)
           setLogoFile(null)
@@ -106,6 +108,7 @@ export default function EditBusiness() {
         descripcion: description.trim() || undefined,
         direccion: address.trim(),
         telefono: phone.trim(),
+        correo: emailNegocio.trim() || undefined,
         logoUrl,
         duenioId: parsed.id,
       })
@@ -195,6 +198,22 @@ export default function EditBusiness() {
                 onChange={(e) => setPhone(e.target.value)}
                 disabled={saving}
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="emailNegocioEdit">
+                Correo de contacto del negocio <span className="form-optional">(recomendado)</span>
+              </label>
+              <input
+                id="emailNegocioEdit"
+                type="email"
+                autoComplete="email"
+                value={emailNegocio}
+                onChange={(e) => setEmailNegocio(e.target.value)}
+                placeholder="reservas@mipeluqueria.com"
+                disabled={saving}
+              />
+              <p className="cb-hint-email">Recibirás alertas cuando un cliente reserve en SlotOne.</p>
             </div>
 
             <div className="form-group">

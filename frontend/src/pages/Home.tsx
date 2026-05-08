@@ -11,6 +11,7 @@ const categories = [
 
 export default function Home() {
   const [negocios, setNegocios] = useState<Negocio[]>([])
+  const [query, setQuery] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -22,6 +23,16 @@ export default function Home() {
       )
       .finally(() => setLoading(false))
   }, [])
+
+  const q = query.trim().toLowerCase()
+  const negociosFiltrados = q
+    ? negocios.filter((b) =>
+        [b.nombre, b.descripcion, b.direccion, b.telefono]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(q))
+      )
+    : negocios
+
   return (
     <div className="home-page">
       <Navbar />
@@ -34,8 +45,10 @@ export default function Home() {
             type="text"
             placeholder="¿Qué servicio buscas?"
             className="home-search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
-          <button className="home-search-btn">Buscar</button>
+          <button className="home-search-btn" onClick={() => setQuery(query.trim())}>Buscar</button>
         </div>
       </header>
 
@@ -51,7 +64,10 @@ export default function Home() {
         {!loading && !error && negocios.length === 0 && (
           <p className="dash-empty">Aún no hay negocios registrados.</p>
         )}
-        {!loading && !error && negocios.map((b) => (
+        {!loading && !error && negocios.length > 0 && negociosFiltrados.length === 0 && (
+          <p className="dash-empty">No se encontraron negocios con los filtros seleccionados.</p>
+        )}
+        {!loading && !error && negociosFiltrados.map((b) => (
           <Link to={`/negocio/${b.id}`} key={b.id} className="home-card">
             {b.logoUrl ? (
               <img

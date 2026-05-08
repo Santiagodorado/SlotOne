@@ -18,6 +18,56 @@ export interface Horario {
   horaFin: string;
 }
 
+export interface SlotDisponible {
+  horaInicio: string;
+  horaFin: string;
+}
+
+export interface Disponibilidad {
+  servicioId: number;
+  fecha: string;
+  slots: SlotDisponible[];
+}
+
+export interface Trabajador {
+  id: number;
+  negocioId: number;
+  nombre: string;
+  email?: string | null;
+  telefono?: string | null;
+  activo: boolean;
+  servicioIds: number[];
+}
+
+export interface Reserva {
+  id: number;
+  codigoReserva: string;
+  negocioId: number;
+  servicioId: number;
+  trabajadorId?: number | null;
+  clienteId?: number | null;
+  clienteNombre: string;
+  clienteEmail: string;
+  clienteTelefono: string;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  estado: string;
+  notas?: string | null;
+}
+
+export interface CrearReservaRequest {
+  servicioId: number;
+  trabajadorId?: number;
+  clienteId?: number;
+  clienteNombre: string;
+  clienteEmail: string;
+  clienteTelefono: string;
+  fecha: string;
+  horaInicio: string;
+  notas?: string;
+}
+
 export interface CrearServicioRequest {
   negocioId: number;
   nombre: string;
@@ -31,6 +81,15 @@ export interface CrearHorarioRequest {
   diaSemana: number;
   horaInicio: string;
   horaFin: string;
+}
+
+export interface CrearTrabajadorRequest {
+  negocioId: number;
+  nombre: string;
+  email?: string;
+  telefono?: string;
+  activo?: boolean;
+  servicioIds: number[];
 }
 
 export function listarServicios(negocioId: number) {
@@ -91,3 +150,59 @@ export function eliminarHorario(id: number, negocioId: number) {
   });
 }
 
+export function consultarDisponibilidad(servicioId: number, fecha: string, trabajadorId?: number | null) {
+  const q = new URLSearchParams({
+    servicioId: String(servicioId),
+    fecha,
+  });
+  if (trabajadorId) q.set('trabajadorId', String(trabajadorId));
+  return apiFetch<Disponibilidad>(`/agenda/disponibilidad?${q.toString()}`);
+}
+
+export function crearReserva(data: CrearReservaRequest) {
+  return apiFetch<Reserva>('/agenda/reservas', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export function listarReservasPorCliente(clienteId: number) {
+  return apiFetch<Reserva[]>(`/agenda/reservas?clienteId=${clienteId}`);
+}
+
+export function listarReservasPorNegocio(negocioId: number, desde: string, hasta: string) {
+  const q = new URLSearchParams({
+    negocioId: String(negocioId),
+    desde,
+    hasta,
+  });
+  return apiFetch<Reserva[]>(`/agenda/reservas?${q.toString()}`);
+}
+
+export function listarTrabajadores(negocioId: number) {
+  return apiFetch<Trabajador[]>(`/agenda/trabajadores?negocioId=${negocioId}`);
+}
+
+export function listarTrabajadoresPorServicio(servicioId: number) {
+  return apiFetch<Trabajador[]>(`/agenda/trabajadores?servicioId=${servicioId}`);
+}
+
+export function crearTrabajador(data: CrearTrabajadorRequest) {
+  return apiFetch<Trabajador>('/agenda/trabajadores', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export function actualizarTrabajador(id: number, data: CrearTrabajadorRequest) {
+  return apiFetch<Trabajador>(`/agenda/trabajadores/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+export function eliminarTrabajador(id: number, negocioId: number) {
+  return apiFetch<void>(`/agenda/trabajadores/${id}?negocioId=${negocioId}`, {
+    method: 'DELETE',
+  });
+}

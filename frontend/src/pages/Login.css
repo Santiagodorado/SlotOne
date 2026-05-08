@@ -21,6 +21,30 @@
   letter-spacing: -0.5px;
 }
 
+.login-brand-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.login-brand-anchor:hover {
+  text-decoration: underline;
+  color: #1e2547;
+}
+
+.login-back-home {
+  margin: 0.65rem 0 0;
+  font-size: 0.875rem;
+}
+
+.login-back-home a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.login-back-home a:hover {
+  text-decoration: underline;
+}
+
 .login-tagline {
   margin-top: 0.25rem;
   font-size: 0.875rem;

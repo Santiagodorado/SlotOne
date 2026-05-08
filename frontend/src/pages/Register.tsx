@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { register } from '../api/auth'
 import './Login.css'
 
 export default function Register() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [nombre, setNombre] = useState('')
   const [apellido, setApellido] = useState('')
   const [phone, setPhone] = useState('')
@@ -20,7 +21,7 @@ export default function Register() {
     e.preventDefault()
     setError(null)
 
-    if (!nombre.trim() || !apellido.trim() || !email.trim() || !password || !confirmPassword) {
+    if (!nombre.trim() || !apellido.trim() || !phone.trim() || !email.trim() || !password || !confirmPassword) {
       setError('Completa todos los campos obligatorios.')
       return
     }
@@ -41,12 +42,14 @@ export default function Register() {
         nombres: nombre.trim(),
         apellidos: apellido.trim(),
         correo: email.trim(),
+        telefono: phone.trim(),
         clave: password,
         tipoIdentificacion: 'CC',
         numIdentificacion: 0,
         idRol: accountType === 'client' ? 1 : 2,
       })
-      navigate('/login', { state: { registered: true } })
+      const redirect = searchParams.get('redirect')
+      navigate(redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login', { state: { registered: true } })
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'No se pudo crear la cuenta. Intenta de nuevo.'
@@ -59,8 +62,15 @@ export default function Register() {
   return (
     <div className="login-page">
       <header className="login-header">
-        <h1 className="login-brand">SlotOne</h1>
+        <h1 className="login-brand">
+          <Link to="/" className="login-brand-anchor">
+            SlotOne
+          </Link>
+        </h1>
         <p className="login-tagline">Plataforma de reservas para negocios</p>
+        <p className="login-back-home">
+          <Link to="/">Ir al inicio</Link>
+        </p>
       </header>
 
       <div className="login-card">
@@ -108,7 +118,7 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="phone">Teléfono <span className="form-optional">(opcional)</span></label>
+            <label htmlFor="phone">Teléfono</label>
             <input
               id="phone"
               type="tel"
@@ -183,7 +193,10 @@ export default function Register() {
         <hr className="login-separator" />
 
         <p className="login-register">
-          ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
+          ¿Ya tienes cuenta?{' '}
+          <Link to={searchParams.get('redirect') ? `/login?redirect=${encodeURIComponent(searchParams.get('redirect') ?? '/')}` : '/login'}>
+            Iniciar sesión
+          </Link>
         </p>
       </div>
     </div>

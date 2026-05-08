@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { login } from '../api/auth'
 import './Login.css'
 
 export default function Login() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -29,13 +30,17 @@ export default function Login() {
         nombres: res.nombres,
         apellidos: res.apellidos,
         correo: res.correo,
+        telefono: res.telefono ?? '',
         rol: res.rol,
       }))
       const rol = res.rol
+      const redirect = searchParams.get('redirect')
       if (rol === 'BUSINESS' || rol === 'ROLE_BUSINESS') {
         navigate('/panel', { replace: true })
       } else if (rol === 'PLATFORM_ADMIN' || rol === 'ROLE_PLATFORM_ADMIN') {
         navigate('/admin', { replace: true })
+      } else if (redirect && redirect.startsWith('/')) {
+        navigate(redirect, { replace: true })
       } else {
         navigate('/', { replace: true })
       }
@@ -51,8 +56,15 @@ export default function Login() {
   return (
     <div className="login-page">
       <header className="login-header">
-        <h1 className="login-brand">SlotOne</h1>
+        <h1 className="login-brand">
+          <Link to="/" className="login-brand-anchor">
+            SlotOne
+          </Link>
+        </h1>
         <p className="login-tagline">Plataforma de reservas para negocios</p>
+        <p className="login-back-home">
+          <Link to="/">Ir al inicio</Link>
+        </p>
       </header>
 
       <div className="login-card">
@@ -101,7 +113,10 @@ export default function Login() {
         <hr className="login-separator" />
 
         <p className="login-register">
-          ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
+          ¿No tienes cuenta?{' '}
+          <Link to={searchParams.get('redirect') ? `/registro?redirect=${encodeURIComponent(searchParams.get('redirect') ?? '/')}` : '/registro'}>
+            Regístrate
+          </Link>
         </p>
       </div>
     </div>

@@ -12,6 +12,7 @@ export interface AuthResponse {
   nombres: string;
   apellidos: string;
   correo: string;
+  telefono?: string;
   tipoIdentificacion: string;
   numIdentificacion: string;
   rol: string;
@@ -21,6 +22,7 @@ export interface RegisterRequest {
   nombres: string;
   apellidos: string;
   correo: string;
+  telefono: string;
   clave: string;
   tipoIdentificacion: 'CC' | 'CE';
   numIdentificacion: number;

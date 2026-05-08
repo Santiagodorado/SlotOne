@@ -65,7 +65,7 @@ export default function Dashboard() {
   function handleLogout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    navigate('/login', { replace: true })
+    navigate('/', { replace: true })
   }
 
   if (!user) return null
@@ -88,7 +88,9 @@ export default function Dashboard() {
   return (
     <div className="dashboard-page">
       <nav className="dashboard-nav">
-        <span className="dashboard-nav-brand">SlotOne</span>
+        <Link to="/" className="dashboard-nav-brand">
+          SlotOne
+        </Link>
         <div className="dashboard-nav-right">
           <span className="dashboard-nav-user">{displayName}</span>
           <button className="dashboard-logout" onClick={handleLogout}>
