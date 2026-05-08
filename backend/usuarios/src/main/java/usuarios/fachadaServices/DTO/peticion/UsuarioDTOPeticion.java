@@ -12,6 +12,7 @@ public class UsuarioDTOPeticion {
     private String nombres;
     private String apellidos;
     private String correo;
+    private String telefono;
     private String clave;
     private TipoIdentificacion tipoIdentificacion;
     private Integer numIdentificacion;

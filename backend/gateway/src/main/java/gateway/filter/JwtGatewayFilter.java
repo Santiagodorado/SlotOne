@@ -31,11 +31,11 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
                 return chain.filter(exchange);
             }
             
-            // Permitir rutas públicas sin validar JWT
-            if (path.contains("/auth/") || 
+            // Permitir rutas públicas sin validar JWT (negocios/agenda no usan este filtro en GatewayConfig)
+            if (path.contains("/auth/") ||
                 path.contains("/h2-console") ||
                 (path.equals("/api/usuarios") && method.equals("POST"))) {
-                
+
                 System.out.println("🔓 Ruta pública permitida: " + method + " " + path);
                 return chain.filter(exchange);
             }

@@ -13,17 +13,19 @@ public class JwtDTORespuesta {
     private String nombres;
     private String apellidos;
     private String correo;
+    private String telefono;
     private String tipoIdentificacion;
     private String numIdentificacion;
     private String rol;
 
     public JwtDTORespuesta(String token, Integer id, String nombres, String apellidos, String correo,
-            String tipoIdentificacion, String numIdentificacion, String rol) {
+            String telefono, String tipoIdentificacion, String numIdentificacion, String rol) {
         this.token = token;
         this.id = id;
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.correo = correo;
+        this.telefono = telefono;
         this.tipoIdentificacion = tipoIdentificacion;
         this.numIdentificacion = numIdentificacion;
         this.rol = rol;

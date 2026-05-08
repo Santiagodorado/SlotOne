@@ -81,15 +81,16 @@ public class UsuarioRepository {
         try {
             conexionABaseDeDatos.conectar();
             PreparedStatement sentencia = null;
-            String consulta = "INSERT INTO usuario (nombres, apellidos, correo, clave, tipoIdentificacion, numIdentificacion, idRol) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String consulta = "INSERT INTO usuario (nombres, apellidos, correo, telefono, clave, tipoIdentificacion, numIdentificacion, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             sentencia = conexionABaseDeDatos.getConnection().prepareStatement(consulta, Statement.RETURN_GENERATED_KEYS);
             sentencia.setString(1, objUsuario.getNombres());
             sentencia.setString(2, objUsuario.getApellidos());
             sentencia.setString(3, objUsuario.getCorreo());
-            sentencia.setString(4, objUsuario.getClave());
-            sentencia.setString(5, objUsuario.getTipoIdentificacion().toString());
-            sentencia.setString(6, String.valueOf(objUsuario.getNumIdentificacion()));
-            sentencia.setInt(7, objUsuario.getRol().getId());
+            sentencia.setString(4, objUsuario.getTelefono());
+            sentencia.setString(5, objUsuario.getClave());
+            sentencia.setString(6, objUsuario.getTipoIdentificacion().toString());
+            sentencia.setString(7, String.valueOf(objUsuario.getNumIdentificacion()));
+            sentencia.setInt(8, objUsuario.getRol().getId());
             resultado = sentencia.executeUpdate();
 
             ResultSet generatedKeys = sentencia.getGeneratedKeys();
@@ -141,16 +142,17 @@ public class UsuarioRepository {
         try {
             conexionABaseDeDatos.conectar();
             PreparedStatement sentencia = null;
-            String consulta = "UPDATE usuario SET nombres = ?, apellidos = ?, correo = ?, clave = ?, tipoIdentificacion = ?, numIdentificacion = ?, idRol = ? WHERE id = ?";
+            String consulta = "UPDATE usuario SET nombres = ?, apellidos = ?, correo = ?, telefono = ?, clave = ?, tipoIdentificacion = ?, numIdentificacion = ?, idRol = ? WHERE id = ?";
             sentencia = conexionABaseDeDatos.getConnection().prepareStatement(consulta);
             sentencia.setString(1, usuarioActualizado.getNombres());
             sentencia.setString(2, usuarioActualizado.getApellidos());
             sentencia.setString(3, usuarioActualizado.getCorreo());
-            sentencia.setString(4, usuarioActualizado.getClave());
-            sentencia.setString(5, usuarioActualizado.getTipoIdentificacion().toString());
-            sentencia.setString(6, String.valueOf(usuarioActualizado.getNumIdentificacion()));
-            sentencia.setLong(7, usuarioActualizado.getRol().getId());
-            sentencia.setLong(8, idUsuario);
+            sentencia.setString(4, usuarioActualizado.getTelefono());
+            sentencia.setString(5, usuarioActualizado.getClave());
+            sentencia.setString(6, usuarioActualizado.getTipoIdentificacion().toString());
+            sentencia.setString(7, String.valueOf(usuarioActualizado.getNumIdentificacion()));
+            sentencia.setLong(8, usuarioActualizado.getRol().getId());
+            sentencia.setLong(9, idUsuario);
 
             resultado = sentencia.executeUpdate();
             sentencia.close();
@@ -222,6 +224,7 @@ public class UsuarioRepository {
                 usuario.setNombres(rs.getString("nombres"));
                 usuario.setApellidos(rs.getString("apellidos"));
                 usuario.setCorreo(rs.getString("correo"));
+                usuario.setTelefono(rs.getString("telefono"));
                 usuario.setClave(rs.getString("clave"));
                 usuario.setTipoIdentificacion(UsuarioEntity.TipoIdentificacion.valueOf(rs.getString("tipoIdentificacion")));
                 usuario.setNumIdentificacion(Integer.parseInt(rs.getString("numIdentificacion")));
@@ -241,6 +244,7 @@ public class UsuarioRepository {
         usuario.setNombres(res.getString("nombres"));
         usuario.setApellidos(res.getString("apellidos"));
         usuario.setCorreo(res.getString("correo"));
+        usuario.setTelefono(res.getString("telefono"));
         usuario.setClave(res.getString("clave"));
         usuario.setTipoIdentificacion(UsuarioEntity.TipoIdentificacion.valueOf(res.getString("tipoIdentificacion")));
         usuario.setNumIdentificacion(Integer.valueOf(res.getString("numIdentificacion")));

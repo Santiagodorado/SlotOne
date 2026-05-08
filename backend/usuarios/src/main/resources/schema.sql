@@ -8,6 +8,7 @@ CREATE TABLE usuario (
     nombres VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
     correo VARCHAR(100) NOT NULL,
+    telefono VARCHAR(30) NOT NULL,
     clave VARCHAR(100) NOT NULL,
     tipoIdentificacion VARCHAR(50),
     numIdentificacion VARCHAR(50),

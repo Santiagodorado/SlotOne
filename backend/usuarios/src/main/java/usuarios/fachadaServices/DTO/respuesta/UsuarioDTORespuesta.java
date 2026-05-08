@@ -12,6 +12,7 @@ public class UsuarioDTORespuesta {
     private String nombres;
     private String apellidos;
     private String correo;
+    private String telefono;
     private TipoIdentificacion tipoIdentificacion;
     private Integer numIdentificacion;
     private RolDTORespuesta rol;

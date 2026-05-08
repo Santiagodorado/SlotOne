@@ -1,0 +1,5 @@
+agenda\model\HorarioEntityTest.class
+agenda\model\ServicioEntityTest.class
+agenda\model\TrabajadorEntityTest.class
+agenda\model\TrabajadorServicioEntityTest.class
+agenda\model\ReservaEntityTest.class

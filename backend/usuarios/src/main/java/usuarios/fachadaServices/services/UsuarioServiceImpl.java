@@ -81,6 +81,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
             objUsuarioDatosNuevos.setNombres(dto.getNombres());
             objUsuarioDatosNuevos.setApellidos(dto.getApellidos());
             objUsuarioDatosNuevos.setCorreo(dto.getCorreo());
+            objUsuarioDatosNuevos.setTelefono(dto.getTelefono());
             objUsuarioDatosNuevos.setClave(dto.getClave());
             objUsuarioDatosNuevos.setTipoIdentificacion(dto.getTipoIdentificacion());
             objUsuarioDatosNuevos.setNumIdentificacion(dto.getNumIdentificacion());
@@ -139,6 +140,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         userDetails.getNombres(),
         userDetails.getApellidos(),
         userDetails.getCorreo(),
+        usuario.get().getTelefono(),
         userDetails.getTipoIdentificacion(),
         userDetails.getNumIdentificacion(),
         roles.get(0));
