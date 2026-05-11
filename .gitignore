@@ -50,3 +50,9 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Maven (salida de compilación; no versionar)
+**/target/
+
+# Archivos de respaldo locales
+*.rar

@@ -629,6 +629,10 @@
   border: 1px solid #fde68a;
 }
 
+.booking-client-anchor-scroll {
+  scroll-margin-top: 5rem;
+}
+
 .booking-client-heading {
   margin: 0 0 1.1rem;
   font-size: 1.06rem;
@@ -644,6 +648,26 @@
 }
 
 .booking-login-actions {
-  justify-content: flex-start;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.booking-register-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.booking-register-link {
+  font-weight: 600;
+  color: #4a6cf7;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.booking-register-link:hover {
+  color: #3857d4;
 }
 

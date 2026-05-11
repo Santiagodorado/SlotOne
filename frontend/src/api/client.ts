@@ -1,5 +1,13 @@
 const baseURL = import.meta.env.VITE_API_URL ?? '/api';
 
+function usesAuthorizationHeader(headers?: HeadersInit): boolean {
+  if (!headers) return false;
+  if (headers instanceof Headers) return headers.has('Authorization');
+  if (Array.isArray(headers))
+    return headers.some(([name]) => name.toLowerCase() === 'authorization');
+  return Object.keys(headers).some((k) => k.toLowerCase() === 'authorization');
+}
+
 function friendlyHttpMessage(status: number): string {
   switch (status) {
     case 409:
@@ -58,12 +66,21 @@ export async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = path.startsWith('http') ? path : `${baseURL}${path}`;
+  const token =
+    typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
+
+  const merged = new Headers({ 'Content-Type': 'application/json' });
+  if (token && !usesAuthorizationHeader(options.headers)) {
+    merged.set('Authorization', `Bearer ${token}`);
+  }
+  if (options.headers) {
+    const extra = new Headers(options.headers);
+    extra.forEach((value, key) => merged.set(key, value));
+  }
+
   const res = await fetch(url, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers: merged,
   });
 
   if (!res.ok) {

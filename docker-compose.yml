@@ -1,0 +1,16 @@
+# PostgreSQL local (tres BD para los microservicios). Arrancar antes de los backends:
+# docker compose up -d
+# Puerto host 5433: evita conflicto si tienes PostgreSQL instalado en Windows en :5432.
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: slotone
+      POSTGRES_PASSWORD: slotone_dev
+    volumes:
+      - slotone_pgdata:/var/lib/postgresql/data
+      - ./deploy/postgres/init-databases.sql:/docker-entrypoint-initdb.d/01-init-databases.sql
+volumes:
+  slotone_pgdata:

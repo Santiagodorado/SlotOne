@@ -1,0 +1,64 @@
+# Blueprint Render para los cuatro microservicios SlotOne (Docker).
+# Requisitos: repo con esta estructura (directorio backend/ en la misma raíz que este archivo).
+# Si tu monorepo anida la carpeta del proyecto (p. ej. slotone/backend/...), cambia estas rutas por el prefijo correcto.
+
+services:
+
+  - type: web
+    name: slotone-usuarios
+    runtime: docker
+    region: virginia
+    plan: free
+    dockerfilePath: ./backend/usuarios/Dockerfile
+    dockerContext: ./backend/usuarios
+    buildFilter:
+      paths:
+        - backend/usuarios/**
+
+  - type: web
+    name: slotone-negocios
+    runtime: docker
+    region: virginia
+    plan: free
+    dockerfilePath: ./backend/negocios/Dockerfile
+    dockerContext: ./backend/negocios
+    buildFilter:
+      paths:
+        - backend/negocios/**
+
+  - type: web
+    name: slotone-agenda
+    runtime: docker
+    region: virginia
+    plan: free
+    dockerfilePath: ./backend/agenda/Dockerfile
+    dockerContext: ./backend/agenda
+    buildFilter:
+      paths:
+        - backend/agenda/**
+    # URL pública de slotone-negocios (https://..., sin / final). Configura en Dashboard si no existe aún la variable.
+    envVars:
+      - key: SLOTONE_NEGOCIOS_BASE_URL
+        sync: false
+
+  - type: web
+    name: slotone-gateway
+    runtime: docker
+    region: virginia
+    plan: free
+    dockerfilePath: ./backend/gateway/Dockerfile
+    dockerContext: ./backend/gateway
+    buildFilter:
+      paths:
+        - backend/gateway/**
+    envVars:
+      - key: SLOTONE_USUARIOS_URL
+        sync: false
+      - key: SLOTONE_NEGOCIOS_URL
+        sync: false
+      - key: SLOTONE_AGENDA_URL
+        sync: false
+      - key: SLOTONE_ALLOWED_ORIGINS
+        sync: false
+      - key: JWT_SECRET
+        sync: false

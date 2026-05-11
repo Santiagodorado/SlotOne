@@ -1,0 +1,21 @@
+# Plantilla SMTP (copia sin credenciales reales al repo).
+
+# Opción recomendada: misma carpeta que run-local.ps1
+#   • .env  o  mail.env (run-local.ps1 intenta primero .env, luego mail.env)
+
+SLOTONE_MAIL_ENABLED=true
+
+SLOTONE_MAIL_FROM=noreply@tudominio.com
+
+SLOTONE_MAIL_BUSINESS_TO=
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=tu-cuenta@gmail.com
+SMTP_PASSWORD=contraseña-de-aplicacion
+SMTP_AUTH=true
+SMTP_STARTTLS=true
+
+# Gmail: verificación en 2 pasos + contraseña de aplicación.
+# Local catcher (Mailpit, etc.) en :1025 sin auth:
+# SMTP_HOST=localhost SMTP_PORT=1025 SMTP_AUTH=false SMTP_STARTTLS=false

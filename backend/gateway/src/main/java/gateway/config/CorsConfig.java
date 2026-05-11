@@ -5,19 +5,28 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 @Configuration
 public class CorsConfig {
 
+    @Value("${slotone.cors.allowed-origins}")
+    private String allowedOrigins;
+
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)  // ← Ejecutar primero
     public CorsWebFilter corsWebFilter() {
         System.out.println("🔧 CORS: CorsWebFilter bean creado"); // ← Log de diagnóstico
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .toList();
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin"));
         config.setExposedHeaders(List.of("Authorization"));

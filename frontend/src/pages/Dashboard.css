@@ -414,6 +414,16 @@
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
+.checkout-review-card--readonly {
+  justify-content: flex-start;
+}
+
+.checkout-review-card .booking-account-hint {
+  margin-top: 0.6rem;
+  max-width: 36rem;
+  line-height: 1.45;
+}
+
 .checkout-review-main {
   display: flex;
   align-items: flex-start;

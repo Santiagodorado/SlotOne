@@ -182,6 +182,7 @@ export default function BusinessDetail() {
   const navigate = useNavigate()
   const negocioId = Number(id)
   const checkoutRef = useRef<HTMLElement | null>(null)
+  const checkoutClienteAnchorRef = useRef<HTMLDivElement | null>(null)
   const prevServicioIdRef = useRef<number | null>(null)
   const prefetchRequestIdRef = useRef(0)
 
@@ -208,7 +209,6 @@ export default function BusinessDetail() {
   const [clienteTelefono, setClienteTelefono] = useState('')
   const [notas, setNotas] = useState('')
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
-  const [editandoContacto, setEditandoContacto] = useState(false)
   const [loading, setLoading] = useState(true)
   const [checkoutVisible, setCheckoutVisible] = useState(false)
   const [reservaExitosa, setReservaExitosa] = useState<ReservaExitosaModal | null>(null)
@@ -414,6 +414,16 @@ export default function BusinessDetail() {
     }
   }, [slots, servicioId, fechaReserva, trabajadorId, negocioId])
 
+  useEffect(() => {
+    if (!checkoutVisible || loading || negocio == null || servicioId == null || !fechaReserva || !slot) {
+      return
+    }
+    const t = window.setTimeout(() => {
+      checkoutClienteAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 160)
+    return () => window.clearTimeout(t)
+  }, [checkoutVisible, user, loading, negocio, servicioId, fechaReserva, slot])
+
   function guardarReservaBorrador() {
     if (!servicioId || !slot || !fechaReserva) return
     const payload: ReservaBorradorGuardado = {
@@ -434,7 +444,6 @@ export default function BusinessDetail() {
 
   function handleContinuar() {
     setCheckoutVisible(true)
-    queueMicrotask(() => checkoutRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -495,7 +504,6 @@ export default function BusinessDetail() {
       }
       setNotas('')
       setAceptaTerminos(false)
-      setEditandoContacto(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo confirmar la reserva.')
     }
@@ -633,43 +641,45 @@ export default function BusinessDetail() {
             </section>
 
             <section className="dash-section">
-              <div className="dash-table-wrap booking-service-strip">
-                <h2>Elegí tu servicio</h2>
-                {servicios.length === 0 && <p className="dash-empty">Este negocio aún no tiene servicios.</p>}
-                <div className="slot-grid">
-                  {servicios.map((s) => (
-                    <button
-                      type="button"
-                      key={s.id}
-                      className={`slot-chip ${servicioId === s.id ? 'active' : ''}`}
-                      onClick={() => {
-                        setServicioId(s.id)
-                      }}
-                    >
-                      {s.nombre} · {s.duracionMinutos} min · ${s.precio.toFixed(0)}
-                    </button>
-                  ))}
-                </div>
-                <div className="booking-worker-row">
-                  <label htmlFor="booking-worker">Profesional</label>
-                  <select
-                    id="booking-worker"
-                    value={trabajadorId ?? ''}
-                    onChange={(e) => setTrabajadorId(Number(e.target.value) || null)}
-                    disabled={!servicioId || !trabajadores.length}
-                  >
-                    <option value="">Cualquier trabajador disponible</option>
-                    {trabajadores.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.nombre}
-                      </option>
+              {!checkoutVisible && (
+                <div className="dash-table-wrap booking-service-strip">
+                  <h2>Elegí tu servicio</h2>
+                  {servicios.length === 0 && <p className="dash-empty">Este negocio aún no tiene servicios.</p>}
+                  <div className="slot-grid">
+                    {servicios.map((s) => (
+                      <button
+                        type="button"
+                        key={s.id}
+                        className={`slot-chip ${servicioId === s.id ? 'active' : ''}`}
+                        onClick={() => {
+                          setServicioId(s.id)
+                        }}
+                      >
+                        {s.nombre} · {s.duracionMinutos} min · ${s.precio.toFixed(0)}
+                      </button>
                     ))}
-                  </select>
-                  {!trabajadores.length && servicioId ? (
-                    <p className="dash-hint">Este servicio aún no tiene trabajadores asignados.</p>
-                  ) : null}
+                  </div>
+                  <div className="booking-worker-row">
+                    <label htmlFor="booking-worker">Profesional</label>
+                    <select
+                      id="booking-worker"
+                      value={trabajadorId ?? ''}
+                      onChange={(e) => setTrabajadorId(Number(e.target.value) || null)}
+                      disabled={!servicioId || !trabajadores.length}
+                    >
+                      <option value="">Cualquier trabajador disponible</option>
+                      {trabajadores.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.nombre}
+                        </option>
+                      ))}
+                    </select>
+                    {!trabajadores.length && servicioId ? (
+                      <p className="dash-hint">Este servicio aún no tiene trabajadores asignados.</p>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <form onSubmit={handleSubmit} className="booking-datetime-shell">
                 {servicioSeleccionado && (
@@ -679,6 +689,8 @@ export default function BusinessDetail() {
                         {error}
                       </p>
                     )}
+                    {!checkoutVisible && (
+                      <>
                     <div className="booking-datetime-head">
                       <h2 className="booking-datetime-title">Selecciona fecha y hora</h2>
                       <p className="booking-datetime-sub">{subtitleReserva}</p>
@@ -828,11 +840,20 @@ export default function BusinessDetail() {
                         Continuar
                       </button>
                     </div>
+                      </>
+                    )}
                   </>
                 )}
 
                 {checkoutVisible && servicioSeleccionado && fechaReserva && slot && negocio && (
                   <section ref={checkoutRef} id="booking-checkout" className="booking-checkout">
+                    <button
+                      type="button"
+                      className="dash-link-btn booking-back-to-datetime"
+                      onClick={() => setCheckoutVisible(false)}
+                    >
+                      ← Volver a elegir fecha u horario
+                    </button>
                     <div className="booking-summary-card">
                       <h3 className="booking-summary-headline">Resumen de la reserva</h3>
                       <ul className="booking-summary-list">
@@ -909,68 +930,60 @@ export default function BusinessDetail() {
                       </div>
                     </div>
 
-                    <h3 className="booking-client-heading">Información del cliente</h3>
-                    {user ? (
-                      <>
-                        <div className="checkout-review-card">
-                          <div className="checkout-review-main">
-                            <span className="checkout-review-radio" aria-hidden />
-                            <div>
-                              <h3>Revisa tus datos de contacto</h3>
-                              <p>{clienteNombre}</p>
-                              <p>{clienteEmail}</p>
-                              <p>{clienteTelefono || 'Sin teléfono registrado'}</p>
+                    <div ref={checkoutClienteAnchorRef} className="booking-client-anchor-scroll">
+                      <h3 className="booking-client-heading">Información del cliente</h3>
+                      {user ? (
+                        <>
+                          <div className="checkout-review-card checkout-review-card--readonly">
+                            <div className="checkout-review-main">
+                              <span className="checkout-review-radio" aria-hidden />
+                              <div>
+                                <h3>Datos de tu cuenta</h3>
+                                <p>{clienteNombre}</p>
+                                <p>{clienteEmail}</p>
+                                <p>{clienteTelefono || 'Sin teléfono registrado'}</p>
+                                <p className="dash-hint booking-account-hint">
+                                  La reserva usará estos datos. Si necesitas otra persona, crea o usa una cuenta con
+                                  sus datos de contacto.
+                                </p>
+                              </div>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            className="dash-link-btn"
-                            onClick={() => setEditandoContacto((v) => !v)}
-                          >
-                            {editandoContacto ? 'Usar este teléfono' : 'Modificar teléfono'}
-                          </button>
-                        </div>
-                        {editandoContacto && (
                           <div className="form-group">
-                            <label>Teléfono de contacto para esta reserva</label>
+                            <label>Notas (opcional)</label>
+                            <textarea value={notas} onChange={(change) => setNotas(change.target.value)} />
+                          </div>
+                          <label className="dash-check">
                             <input
-                              value={clienteTelefono}
-                              onChange={(change) => setClienteTelefono(change.target.value)}
+                              type="checkbox"
+                              checked={aceptaTerminos}
+                              onChange={(change) => setAceptaTerminos(change.target.checked)}
                               required
                             />
-                            <p className="dash-hint">Este cambio aplica solo a esta reserva.</p>
-                          </div>
-                        )}
-                        <div className="form-group">
-                          <label>Notas (opcional)</label>
-                          <textarea value={notas} onChange={(change) => setNotas(change.target.value)} />
+                            Acepto los términos y condiciones de la reserva.
+                          </label>
+                          <button type="submit" className="dash-btn dash-btn-primary" disabled={!slot || !aceptaTerminos}>
+                            Confirmar reserva
+                          </button>
+                        </>
+                      ) : (
+                        <div className="dash-form-actions booking-login-actions">
+                          <button type="submit" className="dash-btn dash-btn-primary">
+                            Iniciar sesión para reservar
+                          </button>
+                          <p className="booking-register-hint">
+                            ¿No tienes cuenta?{' '}
+                            <Link
+                              className="booking-register-link"
+                              to={`/registro?redirect=${encodeURIComponent(`${location.pathname}${location.search}`)}`}
+                              onClick={() => guardarReservaBorrador()}
+                            >
+                              Regístrate
+                            </Link>
+                          </p>
                         </div>
-                        <label className="dash-check">
-                          <input
-                            type="checkbox"
-                            checked={aceptaTerminos}
-                            onChange={(change) => setAceptaTerminos(change.target.checked)}
-                            required
-                          />
-                          Acepto los términos y condiciones de la reserva.
-                        </label>
-                        <button type="submit" className="dash-btn dash-btn-primary" disabled={!slot || !aceptaTerminos}>
-                          Confirmar reserva
-                        </button>
-                      </>
-                    ) : (
-                      <div className="dash-form-actions booking-login-actions">
-                        <button type="submit" className="dash-btn dash-btn-primary">
-                          Iniciar sesión para reservar
-                        </button>
-                        <Link
-                          className="dash-btn dash-btn-secondary"
-                          to={`/registro?redirect=${encodeURIComponent(`${location.pathname}${location.search}`)}`}
-                        >
-                          Crear cuenta
-                        </Link>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </section>
                 )}
               </form>

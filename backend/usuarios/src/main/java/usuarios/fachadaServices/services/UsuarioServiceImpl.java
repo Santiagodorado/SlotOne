@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import usuarios.capaAccesoADatos.models.UsuarioEntity;
 import usuarios.capaAccesoADatos.repositories.RolRepository;
@@ -81,7 +82,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
             objUsuarioDatosNuevos.setNombres(dto.getNombres());
             objUsuarioDatosNuevos.setApellidos(dto.getApellidos());
             objUsuarioDatosNuevos.setCorreo(dto.getCorreo());
-            objUsuarioDatosNuevos.setClave(dto.getClave());
+            objUsuarioDatosNuevos.setTelefono(dto.getTelefono());
+            if (StringUtils.hasText(dto.getClave())) {
+              objUsuarioDatosNuevos.setClave(passwordEncoder.encode(dto.getClave()));
+            }
             objUsuarioDatosNuevos.setTipoIdentificacion(dto.getTipoIdentificacion());
             objUsuarioDatosNuevos.setNumIdentificacion(dto.getNumIdentificacion());
             objUsuarioDatosNuevos.setRol(rolRepository.findById(dto.getIdRol()).orElseThrow(() -> new RuntimeException("Rol no encontrado")));
@@ -99,11 +103,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public UsuarioDTORespuesta login(String email, String password) {
-        Optional<UsuarioEntity> usuario = repository.findByEmailAndPassword(email, password);
-        if (usuario.isPresent()) {
-            return modelMapper.map(usuario.get(), UsuarioDTORespuesta.class);
-        }
-        return null;
+        return repository.findByEmail(email)
+            .filter(u -> passwordEncoder.matches(password, u.getClave()))
+            .map(u -> modelMapper.map(u, UsuarioDTORespuesta.class))
+            .orElse(null);
     }
 
     @Override
@@ -139,6 +142,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         userDetails.getNombres(),
         userDetails.getApellidos(),
         userDetails.getCorreo(),
+        usuario.get().getTelefono(),
         userDetails.getTipoIdentificacion(),
         userDetails.getNumIdentificacion(),
         roles.get(0));

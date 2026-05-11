@@ -10,6 +10,7 @@ import {
   type Servicio,
   type Trabajador,
 } from '../api/agenda'
+import { estadoClass, estadoLabel } from '../utils/reservaEstado'
 
 interface User {
   id: number
@@ -56,19 +57,6 @@ function formatHora(raw: string) {
     minute: '2-digit',
     hour12: true,
   })
-}
-
-function estadoLabel(estado: string) {
-  if (estado === 'CONFIRMED') return 'Confirmada'
-  if (estado === 'CANCELLED') return 'Cancelada'
-  if (estado === 'COMPLETED') return 'Completada'
-  return estado
-}
-
-function estadoClass(estado: string) {
-  if (estado === 'CANCELLED') return 'danger'
-  if (estado === 'COMPLETED') return 'muted'
-  return 'success'
 }
 
 export default function PanelReservas() {

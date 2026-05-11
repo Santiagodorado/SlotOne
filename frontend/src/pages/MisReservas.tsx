@@ -5,6 +5,7 @@ import './Home.css'
 import './Dashboard.css'
 import { listarNegocios, type Negocio } from '../api/negocios'
 import { listarReservasPorCliente, listarServicios, type Reserva, type Servicio } from '../api/agenda'
+import { estadoClass, estadoLabel } from '../utils/reservaEstado'
 
 interface User {
   id: number
@@ -93,7 +94,11 @@ export default function MisReservas() {
                     <td>{servicios.find((s) => s.id === r.servicioId)?.nombre ?? `#${r.servicioId}`}</td>
                     <td>{r.fecha}</td>
                     <td>{formatHora(r.horaInicio)} - {formatHora(r.horaFin)}</td>
-                    <td><span className="dash-role-badge">{r.estado}</span></td>
+                    <td>
+                      <span className={`dash-status-badge ${estadoClass(r.estado)}`}>
+                        {estadoLabel(r.estado)}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

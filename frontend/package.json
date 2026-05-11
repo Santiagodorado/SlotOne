@@ -6,14 +6,22 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "cross-env VITEST_SKIP_INSTALL_CHECKS=1 vitest run",
+    "test:watch": "cross-env VITEST_SKIP_INSTALL_CHECKS=1 vitest"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
+    "cross-env": "^7.0.3",
+    "happy-dom": "^17.6.3",
     "typescript": "~5.9.3",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "react": "^19.2.4",
