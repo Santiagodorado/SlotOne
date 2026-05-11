@@ -183,5 +183,5 @@ Hacer Pull Request a `main` cuando una funcionalidad esté lista.
 
 ## Documentación
 
-- **Seguridad (Sprint / plan vuln):** [docs/security/vuln-plan/](docs/security/vuln-plan/) — proceso de exploración y reparación de vulnerabilidades aplicado al repo.
+- Opcionalmente, documentación interna (p. ej. plan vuln Sprint) puede vivir solo en disco en la carpeta **`docs/`**; no forma parte del repo (véase `.gitignore`).
 - Documento Sprint 1, arquitectura, historias de usuario y backlog: ver wiki del proyecto (Google Sites) o documento en Classroom.

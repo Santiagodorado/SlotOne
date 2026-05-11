@@ -56,3 +56,6 @@ Thumbs.db
 
 # Archivos de respaldo locales
 *.rar
+
+# Documentación interna / reportes locales (no subir al remoto)
+docs/
