@@ -1,4 +1,13 @@
-const baseURL = import.meta.env.VITE_API_URL ?? '/api';
+/** Base del API: en local suele ser `/api` (proxy Vite → gateway). En prod debe ser el gateway + `/api`. */
+function apiBaseUrl(): string {
+  const raw = (import.meta.env.VITE_API_URL as string | undefined)?.trim()
+  if (!raw) return '/api'
+  const noTrailing = raw.replace(/\/+$/, '')
+  if (noTrailing.endsWith('/api')) return noTrailing
+  return `${noTrailing}/api`
+}
+
+const baseURL = apiBaseUrl()
 
 function usesAuthorizationHeader(headers?: HeadersInit): boolean {
   if (!headers) return false;
