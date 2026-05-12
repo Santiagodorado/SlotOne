@@ -23,7 +23,7 @@ export interface CrearNegocioRequest {
 }
 
 export async function listarNegocios(): Promise<Negocio[]> {
-  return apiFetch<Negocio[]>('/negocios');
+  return apiFetch<Negocio[]>('/negocios', { skipAuth: true })
 }
 
 export async function listarNegociosPorDuenio(duenioId: number): Promise<Negocio[]> {

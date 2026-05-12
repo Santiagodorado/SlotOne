@@ -70,25 +70,31 @@ function messageFromErrorBody(body: unknown, statusText: string, status: number)
   return fallback;
 }
 
+export type ApiFetchOptions = RequestInit & {
+  /** No enviar Bearer: rutas públicas en gateway/negocios/agenda fallan con 401 si el token no valida en ese micro (p. ej. JWT_SECRET distinto en Render). */
+  skipAuth?: boolean;
+};
+
 export async function apiFetch<T>(
   path: string,
-  options: RequestInit = {}
+  options: ApiFetchOptions = {}
 ): Promise<T> {
+  const { skipAuth, ...fetchInit } = options;
   const url = path.startsWith('http') ? path : `${baseURL}${path}`;
   const token =
     typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
 
   const merged = new Headers({ 'Content-Type': 'application/json' });
-  if (token && !usesAuthorizationHeader(options.headers)) {
+  if (token && !skipAuth && !usesAuthorizationHeader(fetchInit.headers)) {
     merged.set('Authorization', `Bearer ${token}`);
   }
-  if (options.headers) {
-    const extra = new Headers(options.headers);
+  if (fetchInit.headers) {
+    const extra = new Headers(fetchInit.headers);
     extra.forEach((value, key) => merged.set(key, value));
   }
 
   const res = await fetch(url, {
-    ...options,
+    ...fetchInit,
     headers: merged,
   });
 

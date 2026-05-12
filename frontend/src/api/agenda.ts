@@ -93,7 +93,7 @@ export interface CrearTrabajadorRequest {
 }
 
 export function listarServicios(negocioId: number) {
-  return apiFetch<Servicio[]>(`/agenda/servicios?negocioId=${negocioId}`);
+  return apiFetch<Servicio[]>(`/agenda/servicios?negocioId=${negocioId}`, { skipAuth: true })
 }
 
 export function crearServicio(data: CrearServicioRequest) {
@@ -123,11 +123,11 @@ export function consultarHorarioCubre(servicioId: number, diaSemana: number, hor
     diaSemana: String(diaSemana),
     hora,
   });
-  return apiFetch<{ cubre: boolean }>(`/agenda/horarios/cubre?${q.toString()}`);
+  return apiFetch<{ cubre: boolean }>(`/agenda/horarios/cubre?${q.toString()}`, { skipAuth: true })
 }
 
 export function listarHorarios(negocioId: number) {
-  return apiFetch<Horario[]>(`/agenda/horarios?negocioId=${negocioId}`);
+  return apiFetch<Horario[]>(`/agenda/horarios?negocioId=${negocioId}`, { skipAuth: true })
 }
 
 export function crearHorario(data: CrearHorarioRequest) {
@@ -156,14 +156,15 @@ export function consultarDisponibilidad(servicioId: number, fecha: string, traba
     fecha,
   });
   if (trabajadorId) q.set('trabajadorId', String(trabajadorId));
-  return apiFetch<Disponibilidad>(`/agenda/disponibilidad?${q.toString()}`);
+  return apiFetch<Disponibilidad>(`/agenda/disponibilidad?${q.toString()}`, { skipAuth: true })
 }
 
 export function crearReserva(data: CrearReservaRequest) {
   return apiFetch<Reserva>('/agenda/reservas', {
     method: 'POST',
     body: JSON.stringify(data),
-  });
+    skipAuth: true,
+  })
 }
 
 export function listarReservasPorCliente(clienteId: number) {
@@ -180,11 +181,11 @@ export function listarReservasPorNegocio(negocioId: number, desde: string, hasta
 }
 
 export function listarTrabajadores(negocioId: number) {
-  return apiFetch<Trabajador[]>(`/agenda/trabajadores?negocioId=${negocioId}`);
+  return apiFetch<Trabajador[]>(`/agenda/trabajadores?negocioId=${negocioId}`, { skipAuth: true })
 }
 
 export function listarTrabajadoresPorServicio(servicioId: number) {
-  return apiFetch<Trabajador[]>(`/agenda/trabajadores?servicioId=${servicioId}`);
+  return apiFetch<Trabajador[]>(`/agenda/trabajadores?servicioId=${servicioId}`, { skipAuth: true })
 }
 
 export function crearTrabajador(data: CrearTrabajadorRequest) {
