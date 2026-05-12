@@ -1,4 +1,4 @@
-# Plantilla SMTP (copia sin credenciales reales al repo).
+# Plantilla SMTP / Resend (copia sin credenciales reales al repo).
 
 # Opción recomendada: misma carpeta que run-local.ps1
 #   • .env  o  mail.env (run-local.ps1 intenta primero .env, luego mail.env)
@@ -9,6 +9,16 @@ SLOTONE_MAIL_FROM=noreply@tudominio.com
 
 SLOTONE_MAIL_BUSINESS_TO=
 
+# --- Render (web service plan gratuito) ---
+# Render bloquea salida a puertos SMTP (25, 465, 587). smtp.gmail.com:587 fallará con timeout / MailConnectException.
+# Opciones: (1) subir el servicio a plan de pago para volver a usar SMTP, o (2) usar Resend por HTTPS (abajo).
+
+# --- Resend (recomendado en Render free: solo HTTPS) ---
+# Crea API key en https://resend.com — el remitente SLOTONE_MAIL_FROM debe ser un dominio verificado en Resend.
+# RESEND_API_KEY=re_xxxxxxxx
+# (Si RESEND_API_KEY tiene valor, agenda ignora SMTP para el envío real.)
+
+# --- SMTP (local o servidor con SMTP permitido) ---
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=tu-cuenta@gmail.com

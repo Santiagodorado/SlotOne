@@ -1,5 +1,12 @@
 package agenda.service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -9,6 +16,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import agenda.client.NegocioConsultaClient;
 import agenda.model.ReservaEntity;
@@ -26,17 +37,25 @@ public class NotificacionService {
     private final String from;
     private final String businessToFallback;
     private final NegocioConsultaClient negocioConsultaClient;
+    private final String resendApiKey;
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient =
+            HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
 
     public NotificacionService(
             ObjectProvider<JavaMailSender> mailSenderProvider,
             @Value("${slotone.mail.enabled:false}") boolean mailEnabled,
             @Value("${slotone.mail.from:no-reply@slotone.local}") String from,
             @Value("${slotone.mail.business-to:}") String businessToFallback,
+            @Value("${slotone.mail.resend.api-key:}") String resendApiKey,
+            ObjectMapper objectMapper,
             NegocioConsultaClient negocioConsultaClient) {
         this.mailSender = mailSenderProvider.getIfAvailable();
         this.mailEnabled = mailEnabled;
         this.from = from;
         this.businessToFallback = businessToFallback;
+        this.resendApiKey = resendApiKey != null ? resendApiKey.trim() : "";
+        this.objectMapper = objectMapper;
         this.negocioConsultaClient = negocioConsultaClient;
     }
 
@@ -147,13 +166,23 @@ public class NotificacionService {
             log.warn("No se envió email porque el destinatario está vacío. Asunto: {}", subject);
             return;
         }
-        if (!mailEnabled || mailSender == null) {
+        if (!mailEnabled) {
             log.info("""
                     [EMAIL DESHABILITADO]
                     Para: {}
                     Asunto: {}
                     {}
                     """, to, subject, text);
+            return;
+        }
+
+        if (StringUtils.hasText(resendApiKey)) {
+            enviarCorreoResend(to, subject, text, html);
+            return;
+        }
+
+        if (mailSender == null) {
+            log.warn("Mail habilitado pero no hay JavaMailSender (SMTP). Asunto: {}", subject);
             return;
         }
 
@@ -168,6 +197,40 @@ public class NotificacionService {
             log.info("Email enviado a {} con asunto '{}'.", to, subject);
         } catch (MailException | MessagingException e) {
             log.error("No se pudo enviar email a {} con asunto '{}': {}", to, subject, e.getMessage());
+        }
+    }
+
+    private void enviarCorreoResend(String to, String subject, String text, String html) {
+        try {
+            ObjectNode body = objectMapper.createObjectNode();
+            body.put("from", from);
+            body.putArray("to").add(to);
+            body.put("subject", subject);
+            body.put("text", text);
+            body.put("html", html);
+            String json = objectMapper.writeValueAsString(body);
+            HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.resend.com/emails"))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("Authorization", "Bearer " + resendApiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                log.info("Email enviado (Resend) a {} con asunto '{}'.", to, subject);
+            } else {
+                log.error(
+                        "Resend rechazó el envío a {} con asunto '{}' (HTTP {}): {}",
+                        to,
+                        subject,
+                        response.statusCode(),
+                        response.body());
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Envío Resend interrumpido a {} con asunto '{}': {}", to, subject, e.getMessage());
+        } catch (Exception e) {
+            log.error("No se pudo enviar email (Resend) a {} con asunto '{}': {}", to, subject, e.getMessage());
         }
     }
 
