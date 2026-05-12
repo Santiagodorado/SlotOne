@@ -5,9 +5,24 @@
 
 SLOTONE_MAIL_ENABLED=true
 
-SLOTONE_MAIL_FROM=noreply@tudominio.com
+# Remitente que verá el cliente (elegí una sola línea según tu caso):
+SLOTONE_MAIL_FROM=SlotOne <hola.slotone@gmail.com>
+# (también vale sin nombre: hola.slotone@gmail.com)
 
 SLOTONE_MAIL_BUSINESS_TO=
+
+# --- SlotOne: cuenta Gmail hola.slotone@gmail.com (SMTP) ---
+# 1) En Google: la cuenta hola.slotone@gmail.com → Seguridad → Verificación en 2 pasos (activada).
+# 2) Seguridad → Contraseñas de aplicaciones → generá una para "Correo" / "Otro (SlotOne)".
+# 3) Copiá esa contraseña de 16 caracteres en SMTP_PASSWORD (no es la clave normal de Gmail).
+# 4) Usuario SMTP = la misma cuenta:
+SMTP_USERNAME=hola.slotone@gmail.com
+SMTP_PASSWORD=xxxx-xxxx-xxxx-xxxx
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_AUTH=true
+SMTP_STARTTLS=true
+# Local o Render con plan que permita salida SMTP: con esto alcanza. No pongas RESEND_API_KEY si querés solo Gmail.
 
 # --- Render (web service plan gratuito) ---
 # Render bloquea salida a puertos SMTP (25, 465, 587). smtp.gmail.com:587 fallará con timeout / MailConnectException.
@@ -18,14 +33,7 @@ SLOTONE_MAIL_BUSINESS_TO=
 # RESEND_API_KEY=re_xxxxxxxx
 # (Si RESEND_API_KEY tiene valor, agenda ignora SMTP para el envío real.)
 
-# --- SMTP (local o servidor con SMTP permitido) ---
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USERNAME=tu-cuenta@gmail.com
-SMTP_PASSWORD=contraseña-de-aplicacion
-SMTP_AUTH=true
-SMTP_STARTTLS=true
-
-# Gmail: verificación en 2 pasos + contraseña de aplicación.
+# --- SMTP (solo si no usás Resend; ver bloque Gmail arriba) ---
+# Si ya definiste SMTP_* en el bloque "hola.slotone@gmail.com", no dupliques líneas abajo.
 # Local catcher (Mailpit, etc.) en :1025 sin auth:
 # SMTP_HOST=localhost SMTP_PORT=1025 SMTP_AUTH=false SMTP_STARTTLS=false

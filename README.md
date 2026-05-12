@@ -91,8 +91,9 @@ Seguridad relevante del gateway y del front:
 | Variable | Uso |
 |---------|-----|
 | `SLOTONE_MAIL_ENABLED` | `true` para enviar |
-| `SLOTONE_MAIL_FROM` | Remitente visible (debe estar autorizado por el proveedor SMTP) |
+| `SLOTONE_MAIL_FROM` | Remitente visible, ej. `SlotOne <hola.slotone@gmail.com>` (debe coincidir con lo que autorice Gmail o Resend). |
 | `SLOTONE_MAIL_BUSINESS_TO` | Opcional; destino fijo del negocio si en base de datos no hay `correo` en el negocio (si hay, se usa ese). |
+| `RESEND_API_KEY` | Opcional. Si está definida, **agenda envía por HTTPS** (Resend) y no usa SMTP; útil en **Render plan gratuito** (SMTP bloqueado). |
 | `SMTP_HOST` | Ej. `smtp.gmail.com`, `smtp.resend.com` |
 | `SMTP_PORT` | Ej. `587` (STARTTLS) |
 | `SMTP_USERNAME` / `SMTP_PASSWORD` | Usuario y clave/API key del proveedor |
@@ -141,7 +142,9 @@ Después del primer deploy, anota las URLs públicas **`https://...onrender.com`
 
 - En **`slotone-gateway`** configura `SLOTONE_USUARIOS_URL`, `SLOTONE_NEGOCIOS_URL`, `SLOTONE_AGENDA_URL`; `JWT_SECRET` y opcionalmente `JWT_EXPIRATION_MS` **iguales** que en **`usuarios`**; `SLOTONE_ALLOWED_ORIGINS` con el origen exacto del front en Vercel (varios valores separados por coma si hay staging y prod).
 - En **`agenda`** configura `SLOTONE_NEGOCIOS_BASE_URL` con la URL pública del servicio negocios.
-- En **`agenda`**, correo (opcional): en el panel del servicio define `SLOTONE_MAIL_ENABLED=true`, `SLOTONE_MAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_AUTH=true`, `SMTP_STARTTLS=true` (ver tabla arriba y `backend/agenda/mail-env.example`). Sin eso no se envían correos; solo se registra simulación en logs.
+- En **`agenda`**, correo: copiá las variables desde `backend/agenda/mail-env.example`. Para remitente **`hola.slotone@gmail.com`**, usá `SLOTONE_MAIL_FROM=SlotOne <hola.slotone@gmail.com>`, `SMTP_USERNAME=hola.slotone@gmail.com` y **contraseña de aplicación** de Google en `SMTP_PASSWORD` (ver comentarios en el ejemplo).
+- **Render plan gratuito:** no podés usar Gmail por puerto 587; definí **`RESEND_API_KEY`** y un **`SLOTONE_MAIL_FROM`** permitido por Resend (dominio verificado; un `@gmail.com` arbitrario no suele servir como `from` en Resend). **Render de pago:** podés omitir Resend y usar solo SMTP Gmail como arriba.
+- Sin `SLOTONE_MAIL_ENABLED=true` y credenciales válidas, no se envían correos; solo simulación en logs.
 
 Redespliega o reinicia el **gateway** al cambiar esas variables. En Render se usa la variable **`PORT`** (ya referenciada en `application.properties`); en local siguen valiendo los puertos de la tabla anterior. Define **`DATABASE_URL`**, **`DB_USERNAME`** y **`DB_PASSWORD`** por cada micro; conviene crear **tres bases de datos** dentro de la misma instancia Postgres (como en el `deploy/postgres/init-databases.sql` local) y apuntar cada servicio a la suya.
 
