@@ -58,7 +58,9 @@ public class WebSecurityConfig {
         .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> 
-          auth.requestMatchers("/actuator/**").permitAll()
+          auth.requestMatchers(HttpMethod.GET, "/", "/favicon.ico").permitAll()
+              .requestMatchers(HttpMethod.HEAD, "/").permitAll()
+              .requestMatchers("/actuator/**").permitAll()
               .requestMatchers("/api/usuarios/auth/**").permitAll()
   	      	  .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
               .requestMatchers("/api/usuarios/test/**").permitAll()
