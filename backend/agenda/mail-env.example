@@ -1,39 +1,39 @@
-# Plantilla SMTP / Resend (copia sin credenciales reales al repo).
-
-# Opción recomendada: misma carpeta que run-local.ps1
-#   • .env  o  mail.env (run-local.ps1 intenta primero .env, luego mail.env)
-
-SLOTONE_MAIL_ENABLED=true
-
-# Remitente que verá el cliente (elegí una sola línea según tu caso):
-SLOTONE_MAIL_FROM=SlotOne <hola.slotone@gmail.com>
-# (también vale sin nombre: hola.slotone@gmail.com)
-
-SLOTONE_MAIL_BUSINESS_TO=
-
-# --- SlotOne: cuenta Gmail hola.slotone@gmail.com (SMTP) ---
-# 1) En Google: la cuenta hola.slotone@gmail.com → Seguridad → Verificación en 2 pasos (activada).
-# 2) Seguridad → Contraseñas de aplicaciones → generá una para "Correo" / "Otro (SlotOne)".
-# 3) Copiá esa contraseña de 16 caracteres en SMTP_PASSWORD (no es la clave normal de Gmail).
-# 4) Usuario SMTP = la misma cuenta:
-SMTP_USERNAME=hola.slotone@gmail.com
-SMTP_PASSWORD=xxxx-xxxx-xxxx-xxxx
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_AUTH=true
-SMTP_STARTTLS=true
-# Local o Render con plan que permita salida SMTP: con esto alcanza. No pongas RESEND_API_KEY si querés solo Gmail.
-
-# --- Render (web service plan gratuito) ---
-# Render bloquea salida a puertos SMTP (25, 465, 587). smtp.gmail.com:587 fallará con timeout / MailConnectException.
-# Opciones: (1) subir el servicio a plan de pago para volver a usar SMTP, o (2) usar Resend por HTTPS (abajo).
-
-# --- Resend (recomendado en Render free: solo HTTPS) ---
-# Crea API key en https://resend.com — el remitente SLOTONE_MAIL_FROM debe ser un dominio verificado en Resend.
-# RESEND_API_KEY=re_xxxxxxxx
-# (Si RESEND_API_KEY tiene valor, agenda ignora SMTP para el envío real.)
-
-# --- SMTP (solo si no usás Resend; ver bloque Gmail arriba) ---
-# Si ya definiste SMTP_* en el bloque "hola.slotone@gmail.com", no dupliques líneas abajo.
-# Local catcher (Mailpit, etc.) en :1025 sin auth:
-# SMTP_HOST=localhost SMTP_PORT=1025 SMTP_AUTH=false SMTP_STARTTLS=false
+# Plantilla correo — micro `agenda` (copiá a .env o mail.env; no subas secretos al repo).
+
+# Opción: misma carpeta que run-local.ps1 → .env (prioridad) o mail.env
+
+SLOTONE_MAIL_ENABLED=true
+
+SLOTONE_MAIL_BUSINESS_TO=
+
+# =============================================================================
+# Producción SOLO plan gratuito (Render): SMTP bloqueado → usá Resend (HTTPS)
+# =============================================================================
+# 1) https://resend.com — API key y (ideal) dominio verificado.
+# 2) SLOTONE_MAIL_FROM = dirección que Resend permita (p. ej. onboarding@resend.dev
+#    en pruebas, o noreply@tudominio.com si verificaste el dominio).
+# 3) RESEND_API_KEY=re_...
+# 4) Opcional: que al responder le llegue a tu Gmail del equipo:
+SLOTONE_MAIL_REPLY_TO=hola.slotone@gmail.com
+
+# Ejemplo Resend (ajustá "from" según tu cuenta Resend):
+# SLOTONE_MAIL_FROM=SlotOne <onboarding@resend.dev>
+# RESEND_API_KEY=re_xxxxxxxx
+
+# No hace falta definir SMTP_* en Render free para enviar (se ignoran si hay RESEND_API_KEY).
+
+# =============================================================================
+# Solo en tu PC (desarrollo): Gmail por SMTP — funciona en local
+# =============================================================================
+# SLOTONE_MAIL_FROM=hola.slotone@gmail.com
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_USERNAME=hola.slotone@gmail.com
+# SMTP_PASSWORD=<contraseña de aplicación de Google, 16 caracteres>
+# SMTP_AUTH=true
+# SMTP_STARTTLS=true
+# En local: NO pongas RESEND_API_KEY si querés probar solo Gmail por SMTP.
+
+# Local sin Gmail (Mailpit, etc.):
+# SMTP_HOST=localhost SMTP_PORT=1025 SMTP_AUTH=false SMTP_STARTTLS=false
+

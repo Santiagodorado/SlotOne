@@ -38,6 +38,7 @@ public class NotificacionService {
     private final String businessToFallback;
     private final NegocioConsultaClient negocioConsultaClient;
     private final String resendApiKey;
+    private final String replyTo;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient =
             HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
@@ -48,6 +49,7 @@ public class NotificacionService {
             @Value("${slotone.mail.from:no-reply@slotone.local}") String from,
             @Value("${slotone.mail.business-to:}") String businessToFallback,
             @Value("${slotone.mail.resend.api-key:}") String resendApiKey,
+            @Value("${slotone.mail.reply-to:}") String replyTo,
             ObjectMapper objectMapper,
             NegocioConsultaClient negocioConsultaClient) {
         this.mailSender = mailSenderProvider.getIfAvailable();
@@ -55,6 +57,7 @@ public class NotificacionService {
         this.from = from;
         this.businessToFallback = businessToFallback;
         this.resendApiKey = resendApiKey != null ? resendApiKey.trim() : "";
+        this.replyTo = replyTo != null ? replyTo.trim() : "";
         this.objectMapper = objectMapper;
         this.negocioConsultaClient = negocioConsultaClient;
     }
@@ -190,6 +193,9 @@ public class NotificacionService {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
             helper.setFrom(from);
+            if (StringUtils.hasText(replyTo)) {
+                helper.setReplyTo(replyTo);
+            }
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(text, html);
@@ -208,6 +214,9 @@ public class NotificacionService {
             body.put("subject", subject);
             body.put("text", text);
             body.put("html", html);
+            if (StringUtils.hasText(replyTo)) {
+                body.put("reply_to", replyTo);
+            }
             String json = objectMapper.writeValueAsString(body);
             HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.resend.com/emails"))
                     .timeout(Duration.ofSeconds(30))
